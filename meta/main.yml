@@ -1,0 +1,21 @@
+---
+dependencies:
+  - role: pluggero.docker
+
+galaxy_info:
+  role_name: app_compose
+  namespace: pluggero
+  author: pluggero
+  description: Render and deploy a Docker Compose stack for GitOps pipelines, with a zero-config .env rollback mode.
+  company: Pluggramming
+  license: license (MIT)
+  min_ansible_version: "2.11"
+  platforms:
+    - name: ArchLinux
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - bookworm
+
+  galaxy_tags: []

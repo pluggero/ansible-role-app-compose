@@ -1,0 +1,89 @@
+---
+argument_specs:
+  main:
+    short_description: >-
+      Render a Docker Compose stack (compose.yml, .env, and optional extra
+      config files) into a directory on the target host and deploy it with
+      community.docker.docker_compose_v2, or roll back .env to the previous
+      deploy.
+    options:
+      app_compose_app_name:
+        type: str
+        required: true
+        description: >-
+          Name of the application being deployed. Used to derive
+          app_compose_dir and app_compose_project_name when not overridden.
+      app_compose_source_compose_file:
+        type: path
+        required: true
+        description: >-
+          Path to the Docker Compose source file. May be a static compose
+          file or a Jinja2 template — it is always rendered with
+          ansible.builtin.template into <app_compose_dir>/compose.yml.
+      app_compose_secrets:
+        type: dict
+        required: true
+        no_log: true
+        description: >-
+          Secret key/value pairs merged into the rendered .env file. Values
+          here take precedence over app_compose_env_vars on key collision.
+      app_compose_dir:
+        type: path
+        default: "/opt/{{ app_compose_app_name }}"
+        description: >-
+          Directory on the target host where compose.yml, .env, and any
+          extra templates are rendered, and from which the stack is deployed.
+      app_compose_env_vars:
+        type: dict
+        default: {}
+        description: >-
+          Plain (non-secret) key/value pairs merged into the rendered .env
+          file.
+      app_compose_extra_templates:
+        type: list
+        elements: dict
+        default: []
+        description: >-
+          Additional files to render into app_compose_dir — e.g. a
+          reverse-proxy config. Each entry's dest is relative to
+          app_compose_dir.
+        options:
+          src:
+            type: path
+            required: true
+            description: Path to a static file or Jinja2 template on the controller.
+          dest:
+            type: path
+            required: true
+            description: Destination path, relative to app_compose_dir.
+          mode:
+            type: str
+            required: true
+            description: File mode to apply to the rendered destination file.
+      app_compose_rollback:
+        type: bool
+        default: false
+        description: >-
+          When true, roll back .env to the previously deployed version
+          instead of rendering a new one. Fails clearly if no previous
+          .env exists. Running with this set twice in a row toggles between
+          the two most recent .env configs.
+      app_compose_pull_policy:
+        type: str
+        default: always
+        choices:
+          - always
+          - missing
+          - never
+          - build
+        description: Image pull policy passed to community.docker.docker_compose_v2.
+      app_compose_wait_timeout:
+        type: int
+        default: 120
+        description: >-
+          Seconds to wait for the stack to report healthy before
+          community.docker.docker_compose_v2 fails the task.
+      app_compose_project_name:
+        type: str
+        default: "{{ app_compose_app_name }}"
+        description: Compose project name passed to community.docker.docker_compose_v2.

@@ -1,0 +1,11 @@
+---
+# Molecule test fixture only — a real caller supplies their own compose
+# file/template via app_compose_source_compose_file.
+services:
+  demo:
+    # NOTE: placeholder image for test purposes only. A real caller pins
+    # their own app's image/tag/digest in their own compose source.
+    image: "{{ app_compose_test_image }}"
+    environment:
+      DEMO_SECRET: "${DEMO_SECRET}"
+      DEMO_MODE: "${DEMO_MODE}"

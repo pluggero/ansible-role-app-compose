@@ -1,0 +1,50 @@
+---
+- name: Verify
+  hosts: all
+
+  vars:
+    ansible_user: ansible
+    ansible_password: ansible
+    ansible_become_password: ansible
+
+  tasks:
+    - name: Stat rendered compose file
+      ansible.builtin.stat:
+        path: /opt/demo-app/compose.yml
+      register: app_compose_verify_compose
+      become: true
+
+    - name: Stat rendered .env file
+      ansible.builtin.stat:
+        path: /opt/demo-app/.env
+      register: app_compose_verify_env
+      become: true
+
+    - name: Stat rendered extra template
+      ansible.builtin.stat:
+        path: /opt/demo-app/extra/demo.conf
+      register: app_compose_verify_extra
+      become: true
+
+    - name: Assert rendered files exist with expected permissions
+      ansible.builtin.assert:
+        that:
+          - app_compose_verify_compose.stat.exists
+          - app_compose_verify_compose.stat.mode == '0644'
+          - app_compose_verify_env.stat.exists
+          - app_compose_verify_env.stat.mode == '0600'
+          - app_compose_verify_extra.stat.exists
+          - app_compose_verify_extra.stat.mode == '0640'
+        fail_msg: "One or more rendered app_compose files are missing or have unexpected permissions."
+
+    - name: Check compose stack status
+      ansible.builtin.command: docker compose -p demo-app ps --status running --format json
+      register: app_compose_verify_ps
+      changed_when: false
+      become: true
+
+    - name: Assert the compose stack is running
+      ansible.builtin.assert:
+        that:
+          - app_compose_verify_ps.stdout | length > 0
+        fail_msg: "Expected the demo-app compose stack to have at least one running service."

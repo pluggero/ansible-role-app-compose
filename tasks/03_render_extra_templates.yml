@@ -1,0 +1,22 @@
+---
+- name: Ensure parent directories for extra templates exist
+  ansible.builtin.file:
+    path: "{{ (app_compose_dir ~ '/' ~ extra_template.dest) | dirname }}"
+    state: directory
+    mode: "0750"
+  loop: "{{ app_compose_extra_templates }}"
+  loop_control:
+    loop_var: extra_template
+    label: "{{ extra_template.dest }}"
+  become: true
+
+- name: Render extra config files into deploy directory
+  ansible.builtin.template:
+    src: "{{ extra_template.src }}"
+    dest: "{{ app_compose_dir }}/{{ extra_template.dest }}"
+    mode: "{{ extra_template.mode }}"
+  loop: "{{ app_compose_extra_templates }}"
+  loop_control:
+    loop_var: extra_template
+    label: "{{ extra_template.dest }}"
+  become: true

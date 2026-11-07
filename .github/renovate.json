@@ -1,0 +1,113 @@
+{
+  "extends": [
+    "config:best-practices",
+    ":disableRateLimiting"
+  ],
+  "automerge": false,
+  "automergeType": "pr",
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions", "pip_requirements"],
+      "automerge": true,
+      "automergeType": "pr",
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "automerge": false
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["python/cpython"],
+      "automerge": true,
+      "automergeType": "pr",
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "matchDatasources": ["github-runners"],
+      "automerge": false
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDepNames": ["/^pluggero\\/vagrant-.*-ansible$/"],
+      "automerge": true,
+      "automergeType": "pr",
+      "minimumReleaseAge": "7 days"
+    },
+    {
+       "matchManagers": ["ansible-galaxy", "custom.regex"],
+       "matchPackageNames": ["pluggero.docker"]
+    }
+  ],
+  "enabledManagers": [
+    "github-actions",
+    "pip_requirements",
+    "custom.regex",
+    "ansible-galaxy"
+  ],
+  "assignees": ["pluggero"],
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "minimumReleaseAge": null,
+    "automerge": false,
+    "labels": ["security"]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^.github/workflows/ci\\.yml$/"
+      ],
+      "matchStrings": [
+        "VBOX_VERSION:\\s+\"(?<currentValue>[\\d\\.]+)\""
+      ],
+      "datasourceTemplate": "custom.virtualbox",
+      "depNameTemplate": "virtualbox-ci",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^.github/workflows/ci\\.yml$/",
+        "/^molecule/default/molecule\\.yml$/"
+      ],
+      "matchStrings": [
+        "vagrant_box:\\s+debian12\\s+vagrant_box_version:\\s+\"(?<currentValue>[\\d\\.]+)\"",
+        "box_version:\\s+\"\\$\\{MOLECULE_VAGRANT_BOX_VERSION:-(?<currentValue>[\\d\\.]+)\\}\""
+      ],
+      "datasourceTemplate": "github-tags",
+      "depNameTemplate": "pluggero/vagrant-debian12-ansible",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^.github/workflows/ci\\.yml$/"
+      ],
+      "matchStrings": [
+        "vagrant_box:\\s+archlinux\\s+vagrant_box_version:\\s+\"(?<currentValue>[\\d\\.]+)\""
+      ],
+      "datasourceTemplate": "github-tags",
+      "depNameTemplate": "pluggero/vagrant-archlinux-ansible",
+      "versioningTemplate": "loose"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "\\.github/workflows/.+\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "python-version:\\s+[\"'](?<currentValue>\\d+\\.\\d+)[\"']"
+      ],
+      "datasourceTemplate": "github-tags",
+      "depNameTemplate": "python/cpython",
+      "versioningTemplate": "semver"
+    }
+  ],
+  "customDatasources": {
+    "virtualbox": {
+      "defaultRegistryUrlTemplate": "https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT",
+      "format": "plain"
+    }
+  }
+}

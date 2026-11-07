@@ -1,0 +1,10 @@
+---
+- name: Deploy compose stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_compose_dir }}"
+    project_name: "{{ app_compose_project_name }}"
+    pull: "{{ app_compose_pull_policy }}"
+    remove_orphans: true
+    wait: true
+    wait_timeout: "{{ app_compose_wait_timeout }}"
+  become: true

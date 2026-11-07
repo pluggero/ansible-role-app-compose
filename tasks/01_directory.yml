@@ -1,0 +1,7 @@
+---
+- name: Ensure app_compose deploy directory exists
+  ansible.builtin.file:
+    path: "{{ app_compose_dir }}"
+    state: directory
+    mode: "0750"
+  become: true

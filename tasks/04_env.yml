@@ -1,0 +1,8 @@
+---
+- name: Render application environment file
+  ansible.builtin.include_tasks: noauto_env_render.yml
+  when: not app_compose_rollback
+
+- name: Roll back application environment file
+  ansible.builtin.include_tasks: noauto_env_rollback.yml
+  when: app_compose_rollback

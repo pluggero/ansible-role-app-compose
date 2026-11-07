@@ -1,0 +1,53 @@
+---
+- name: Check for previous .env file
+  ansible.builtin.stat:
+    path: "{{ app_compose_dir }}/.env.previous"
+  register: app_compose_previous_env
+  changed_when: false
+
+- name: Fail if no previous .env file exists to roll back to
+  ansible.builtin.fail:
+    msg: >-
+      app_compose_rollback is true but {{ app_compose_dir }}/.env.previous
+      does not exist. Deploy normally (app_compose_rollback: false) at
+      least once before attempting a rollback.
+  when: not app_compose_previous_env.stat.exists
+
+- name: Swap current and previous .env files
+  no_log: true
+  become: true
+  block:
+    - name: Create scratch file for .env swap
+      ansible.builtin.tempfile:
+        state: file
+        suffix: _app_compose_env_swap
+      register: app_compose_env_swap_tmp
+      changed_when: false
+
+    - name: Copy current .env into scratch file
+      ansible.builtin.copy:
+        src: "{{ app_compose_dir }}/.env"
+        dest: "{{ app_compose_env_swap_tmp.path }}"
+        remote_src: true
+        mode: "0600"
+
+    - name: Promote previous .env to current
+      ansible.builtin.copy:
+        src: "{{ app_compose_dir }}/.env.previous"
+        dest: "{{ app_compose_dir }}/.env"
+        remote_src: true
+        mode: "0600"
+
+    - name: Demote former current .env to previous
+      ansible.builtin.copy:
+        src: "{{ app_compose_env_swap_tmp.path }}"
+        dest: "{{ app_compose_dir }}/.env.previous"
+        remote_src: true
+        mode: "0600"
+  always:
+    - name: Remove scratch file used for .env swap
+      ansible.builtin.file:
+        path: "{{ app_compose_env_swap_tmp.path }}"
+        state: absent
+      when: app_compose_env_swap_tmp is defined
+      changed_when: false

@@ -1,0 +1,23 @@
+---
+role_name_check: 1
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+platforms:
+  - name: instance
+    box: "pluggero/${MOLECULE_DISTRO:-debian12}-ansible"
+    box_version: "${MOLECULE_VAGRANT_BOX_VERSION:-2026.09.27}"
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callbacks_enabled: ansible.posix.timer, ansible.posix.profile_tasks, ansible.posix.profile_roles
+      host_key_checking: false
+    ssh_connection:
+      pipelining: true
+      ssh_args: -o ControlMaster=auto -o ControlPersist=60s
+    callback_profile_roles:
+      summary_only: true
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}

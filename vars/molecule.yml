@@ -1,0 +1,23 @@
+---
+# Molecule test variable overrides for the app_compose role under test.
+
+# Test-fixture-only variable (NOT part of the app_compose contract).
+# Placeholder image/tag so the Molecule scenario can actually pull and run
+# something — a real caller pins their own app's image/tag/digest in their
+# own compose source file instead.
+app_compose_test_image: "nginx:1.27-alpine"
+
+# --- app_compose_* variables under test ---
+app_compose_app_name: demo-app
+app_compose_source_compose_file: "{{ playbook_dir }}/compose_fixture.yml.j2"
+app_compose_secrets:
+  DEMO_SECRET: "placeholder-secret-value"
+app_compose_env_vars:
+  DEMO_MODE: "molecule-test"
+app_compose_extra_templates:
+  - src: "{{ playbook_dir }}/extra_fixture.conf.j2"
+    dest: "extra/demo.conf"
+    mode: "0640"
+# "always" would always report changed, failing idempotence.
+app_compose_pull_policy: missing
+app_compose_wait_timeout: 60

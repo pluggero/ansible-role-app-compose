@@ -1,0 +1,13 @@
+---
+# app_compose_app_name: ""              # required, no default — supplied by the caller
+# app_compose_source_compose_file: ""    # required, no default — path to a compose file or Jinja2 template
+# app_compose_secrets:                   # required, no default — dict of secret KEY: value pairs
+#   DB_PASSWORD: "{{ vault_app_compose_myapp_db_password }}"
+
+app_compose_dir: "/opt/{{ app_compose_app_name }}"
+app_compose_env_vars: {}
+app_compose_extra_templates: []
+app_compose_rollback: false
+app_compose_pull_policy: always
+app_compose_wait_timeout: 120
+app_compose_project_name: "{{ app_compose_app_name }}"

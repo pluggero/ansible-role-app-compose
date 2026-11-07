@@ -1,0 +1,22 @@
+---
+- name: Prepare
+  hosts: all
+
+  vars_files:
+    - ../../vars/molecule.yml
+
+  vars:
+    ansible_user: ansible
+    ansible_password: ansible
+    ansible_become_password: ansible
+
+  tasks:
+    - name: Ensure deploy directory exists (warm-up)
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+        tasks_from: 01_directory
+
+    - name: Seed .env/.env.previous so the idempotence check starts from stable state
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+        tasks_from: noauto_env_render

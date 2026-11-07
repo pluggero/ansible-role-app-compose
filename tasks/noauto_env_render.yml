@@ -1,0 +1,27 @@
+---
+- name: Check for existing .env file
+  ansible.builtin.stat:
+    path: "{{ app_compose_dir }}/.env"
+  register: app_compose_existing_env
+  changed_when: false
+  become: true
+
+- name: Back up existing .env file to .env.previous
+  ansible.builtin.copy:
+    src: "{{ app_compose_dir }}/.env"
+    dest: "{{ app_compose_dir }}/.env.previous"
+    remote_src: true
+    mode: "0600"
+  when: app_compose_existing_env.stat.exists
+  no_log: true
+  become: true
+
+- name: Render application .env file
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ app_compose_dir }}/.env"
+    mode: "0600"
+  vars:
+    app_compose_merged_env: "{{ app_compose_env_vars | combine(app_compose_secrets) }}"
+  no_log: true
+  become: true
