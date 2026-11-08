@@ -34,7 +34,7 @@ Available variables are listed below, along with default values (see
 | Variable | Type | Description |
 | --- | --- | --- |
 | `app_compose_app_name` | str | Application name; used to derive `app_compose_dir` and `app_compose_project_name`. |
-| `app_compose_source_compose_file` | path | Path to a compose file or Jinja2 template, rendered into `<app_compose_dir>/compose.yml`. |
+| `app_compose_source_compose_file` | path | Path to a compose file or Jinja2 template, rendered into `<app_compose_dir>/compose.yml` (mode `0640`). Use `app_compose_secrets` for secrets, not this file. |
 | `app_compose_secrets` | dict | Secret key/value pairs merged into `.env`. Wins over `app_compose_env_vars` on key collision. `no_log: true`. |
 
 ### Optional

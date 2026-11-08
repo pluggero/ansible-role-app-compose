@@ -30,7 +30,7 @@
       ansible.builtin.assert:
         that:
           - app_compose_verify_compose.stat.exists
-          - app_compose_verify_compose.stat.mode == '0644'
+          - app_compose_verify_compose.stat.mode == '0640'
           - app_compose_verify_env.stat.exists
           - app_compose_verify_env.stat.mode == '0600'
           - app_compose_verify_extra.stat.exists
