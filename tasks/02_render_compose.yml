@@ -3,5 +3,5 @@
   ansible.builtin.template:
     src: "{{ app_compose_source_compose_file }}"
     dest: "{{ app_compose_dir }}/compose.yml"
-    mode: "0644"
+    mode: "0640"
   become: true
