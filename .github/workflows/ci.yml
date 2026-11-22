@@ -48,9 +48,9 @@ jobs:
       matrix:
         include:
           - vagrant_box: debian12
-            vagrant_box_version: "2026.09.27"
+            vagrant_box_version: "2026.11.22"
           - vagrant_box: archlinux
-            vagrant_box_version: "2026.09.27"
+            vagrant_box_version: "2026.11.22"
     env:
       VBOX_VERSION: "7.2.22"
       VBOX_DEB_DISTRO: "Ubuntu"
@@ -177,6 +177,8 @@ jobs:
           ANSIBLE_FORCE_COLOR: "1"
           MOLECULE_DISTRO: ${{ matrix.vagrant_box }}
           MOLECULE_VAGRANT_BOX_VERSION: ${{ matrix.vagrant_box_version }}
+          VAGRANT_BOX_S3_BUCKET: ${{ vars.VAGRANT_BOX_S3_BUCKET }}
+          VAGRANT_BOX_S3_ENDPOINT: ${{ vars.VAGRANT_BOX_S3_ENDPOINT }}
 
   status-check:
     name: Status Check

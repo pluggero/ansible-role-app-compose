@@ -6,8 +6,9 @@ driver:
   name: vagrant
 platforms:
   - name: instance
-    box: "pluggero/${MOLECULE_DISTRO:-debian12}-ansible"
-    box_version: "${MOLECULE_VAGRANT_BOX_VERSION:-2026.09.27}"
+    box: "${MOLECULE_DISTRO:-debian12}-ansible"
+    box_version: "${MOLECULE_VAGRANT_BOX_VERSION:-2026.11.22}"
+    box_url: "${VAGRANT_BOX_S3_ENDPOINT}/${VAGRANT_BOX_S3_BUCKET}/${MOLECULE_DISTRO:-debian12}-ansible/metadata.json"
 provisioner:
   name: ansible
   config_options:
